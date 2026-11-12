@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>No todo link que llega por SMS es real | [NOMBRE DE LA ORGANIZACIÓN]</title>
+<meta name="description" content="Campaña de concientización: cómo identificar mensajes de texto fraudulentos (smishing) y qué hacer si ya hiciste clic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== Tokens de color (claro) ===== */
+  :root {
+    color-scheme: light;
+    --bg: #F4F5F7;
+    --surface: #FFFFFF;
+    --surface-2: #F8FAFC;
+    --bubble: #E2E8F0;
+    --ink: #0F172A;
+    --ink-2: #334155;
+    --muted: #475569;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --accent: #C2410C;          /* acento principal: cambiar por color de marca */
+    --dark-band: #0F172A;
+    --dark-band-ink: #F8FAFC;
+    --dark-band-muted: #CBD5E1;
+    --warn-bg: #FFEDD5;  --warn-ink: #9A3412;  --warn-strong: #9A3412;
+    --info-bg: #DBEAFE;  --info-ink: #1E3A8A;  --info-strong: #1E40AF;
+    --teal: #0F766E;
+    --blue: #1D4ED8;
+    --url-hl-bg: #FDBA74; --url-hl-ink: #431407; --url-label: #FDBA74;
+    --focus: #1D4ED8;
+    --link: #1D4ED8;
+  }
+  /* ===== Tokens de color (oscuro) ===== */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0B1120; --surface: #111A2E; --surface-2: #0F172A; --bubble: #1E293B;
+      --ink: #F1F5F9; --ink-2: #CBD5E1; --muted: #A3B1C6;
+      --border: #1E293B; --border-strong: #334155;
+      --accent: #FB923C;
+      --dark-band: #020617; --dark-band-ink: #F8FAFC; --dark-band-muted: #CBD5E1;
+      --warn-bg: #431407; --warn-ink: #FED7AA; --warn-strong: #EA580C;
+      --info-bg: #172554; --info-ink: #BFDBFE; --info-strong: #2563EB;
+      --teal: #5EEAD4; --blue: #93C5FD;
+      --focus: #93C5FD; --link: #93C5FD;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0B1120; --surface: #111A2E; --surface-2: #0F172A; --bubble: #1E293B;
+    --ink: #F1F5F9; --ink-2: #CBD5E1; --muted: #A3B1C6;
+    --border: #1E293B; --border-strong: #334155;
+    --accent: #FB923C;
+    --dark-band: #020617; --dark-band-ink: #F8FAFC; --dark-band-muted: #CBD5E1;
+    --warn-bg: #431407; --warn-ink: #FED7AA; --warn-strong: #EA580C;
+    --info-bg: #172554; --info-ink: #BFDBFE; --info-strong: #2563EB;
+    --teal: #5EEAD4; --blue: #93C5FD;
+    --focus: #93C5FD; --link: #93C5FD;
+  }
+
+  /* ===== Base ===== */
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  *, *::before, *::after { box-sizing: inherit; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: "Space Grotesk", Inter, system-ui, sans-serif; margin: 0; }
+  p { margin: 0; }
+  a { color: var(--link); }
+  img, svg { max-width: 100%; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+  .band { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .section { padding-top: 64px; padding-bottom: 64px; display: flex; flex-direction: column; gap: 28px; }
+  .section-head { display: flex; flex-direction: column; gap: 8px; max-width: 740px; }
+  .h2 { font-size: clamp(28px, 3.5vw, 40px); line-height: 1.1; }
+  .lead { font-size: 17px; color: var(--muted); }
+  .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+  .mono { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 48px; padding: 0 22px; border-radius: 8px;
+    font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+  }
+  .btn-solid { background: var(--ink); color: var(--bg); border: 1px solid var(--ink); }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+
+  /* ===== Header ===== */
+  .topbar { background: var(--dark-band); color: var(--dark-band-ink); }
+  .topbar .wrap { padding-top: 18px; padding-bottom: 18px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo-ph { width: 40px; height: 40px; border-radius: 8px; border: 1px dashed #94A3B8; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--dark-band-muted); }
+  .brand-name { font-family: "Space Grotesk", Inter, sans-serif; font-weight: 700; font-size: 17px; }
+  .topbar small { font-size: 14px; color: var(--dark-band-muted); }
+
+  /* ===== Hero ===== */
+  .hero { padding-top: 72px; padding-bottom: 56px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center; }
+  .hero-copy { flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+  .kicker { font-size: 15px; font-weight: 600; color: var(--accent); }
+  .hero h1 { font-size: clamp(36px, 5vw, 60px); line-height: 1.05; font-weight: 700; }
+  .hero-copy p { font-size: 19px; color: var(--ink-2); max-width: 560px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+
+  .hero-visual { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .phone-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+  .sms-meta { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--muted); }
+  .sms-meta strong { font-weight: 600; }
+  .bubble { background: var(--bubble); border-radius: 16px 16px 16px 4px; padding: 16px 18px; font-size: 16px; }
+  .mark { background: var(--warn-bg); color: var(--warn-ink); padding: 1px 4px; border-radius: 4px; font-weight: 600; }
+  .mark-link { text-decoration: underline; }
+  .callouts { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); font-size: 14px; color: var(--ink-2); }
+  .callout { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+  .callout strong { color: var(--warn-ink); }
+
+  /* ===== Señales ===== */
+  .signal { border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .signal svg { stroke: var(--ink); }
+  .signal h3 { font-size: 19px; font-family: Inter, system-ui, sans-serif; font-weight: 600; }
+  .signal p { color: var(--muted); }
+
+  /* ===== Link ===== */
+  .url-box { background: var(--dark-band); color: var(--dark-band-ink); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+  .url-scroll { overflow-x: auto; }
+  .url { font-size: clamp(15px, 2vw, 22px); white-space: nowrap; }
+  .url .dim { color: #94A3B8; }
+  .url .sub { color: #CBD5E1; }
+  .url .real { background: var(--url-hl-bg); color: var(--url-hl-ink); padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+  .url-notes { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); font-size: 15px; }
+  .url-notes div { display: flex; flex-direction: column; gap: 4px; }
+  .url-notes strong { color: var(--url-label); }
+  .url-notes span { color: #E2E8F0; }
+  .typo { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .typo .mono { font-size: 15px; color: var(--ink-2); }
+  .typo span:last-child { color: var(--muted); font-size: 15px; }
+  .rule { font-size: 17px; color: var(--accent); font-weight: 600; }
+
+  /* ===== Quiz ===== */
+  .quiz-head { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end; }
+  .score { display: flex; align-items: center; gap: 12px; }
+  .score span { font-size: 16px; font-weight: 600; }
+  .btn-sm { min-height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+  .case { border: 1px solid var(--border); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 14px; background: var(--surface-2); }
+  .case .sender { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .case .bubble { font-size: 16px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 10px; }
+  .choice[aria-pressed="true"][data-choice="fraude"] { background: var(--warn-strong); border-color: var(--warn-strong); color: #FFFFFF; }
+  .choice[aria-pressed="true"][data-choice="legitimo"] { background: var(--info-strong); border-color: var(--info-strong); color: #FFFFFF; }
+  .feedback { border-radius: 10px; padding: 14px 16px; font-size: 15px; }
+  .feedback[hidden] { display: none; }
+  .feedback.is-fraude { background: var(--warn-bg); color: var(--warn-ink); }
+  .feedback.is-legitimo { background: var(--info-bg); color: var(--info-ink); }
+
+  /* ===== Qué hacer ===== */
+  .action { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 12px; }
+  .action .tag { font-size: 14px; font-weight: 600; }
+  .action h3 { font-size: 21px; }
+  .action ul { margin: 0; padding-left: 20px; color: var(--ink-2); display: flex; flex-direction: column; gap: 8px; }
+  .tag-blue { color: var(--blue); } .tag-orange { color: var(--warn-ink); } .tag-teal { color: var(--teal); }
+
+  /* ===== Cierre ===== */
+  .closing { background: var(--dark-band); color: var(--dark-band-ink); }
+  .closing .wrap { padding-top: 56px; padding-bottom: 56px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; }
+  .closing p { flex: 1 1 520px; font-family: "Space Grotesk", Inter, sans-serif; font-weight: 700; font-size: clamp(24px, 3vw, 34px); line-height: 1.2; }
+  .btn-light { background: var(--dark-band-ink); color: #0F172A; border: 1px solid var(--dark-band-ink); }
+  footer .wrap { padding-top: 28px; padding-bottom: 40px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <!-- Reemplazar por: <img src="logo.svg" alt="[NOMBRE DE LA ORGANIZACIÓN]" height="40"> -->
+      <div class="logo-ph" aria-hidden="true">LOGO</div>
+      <span class="brand-name">[NOMBRE DE LA ORGANIZACIÓN]</span>
+    </div>
+    <small>Campaña de concientización en seguridad de la información</small>
+  </div>
+</header>
+
+<main>
+  <!-- ===== Hero ===== -->
+  <section class="wrap hero">
+    <div class="hero-copy">
+      <span class="kicker">Smishing: fraude por mensaje de texto</span>
+      <h1>Que llegue a tu celular no lo hace verdadero.</h1>
+      <p>Los delincuentes envían SMS que imitan a bancos, entidades de gobierno, empresas de mensajería o tu propia organización. Un solo clic puede entregarles tus claves, tu dinero o el acceso a la red de la empresa.</p>
+      <div class="cta-row">
+        <a class="btn btn-solid" href="#test">Pon a prueba tu ojo</a>
+        <a class="btn btn-ghost" href="#que-hacer">Qué hacer si ya hice clic</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="phone-card" role="img" aria-label="Ejemplo de SMS fraudulento con tres señales de alerta marcadas">
+        <div class="sms-meta"><strong>Remitente: 890 412</strong><span>Hoy 7:42 a. m.</span></div>
+        <div class="bubble">
+          <span class="mark">[1] ALERTA: Su cuenta será bloqueada en 2 horas</span> por un movimiento inusual.
+          <span class="mark">[2] Verifique sus datos aquí:</span>
+          <span class="mark mark-link">[3] bit.ly/3xVrf-cuenta</span>
+        </div>
+      </div>
+      <div class="callouts">
+        <div class="callout"><strong>1 · Urgencia.</strong> Te presionan para que no pienses.</div>
+        <div class="callout"><strong>2 · Piden datos.</strong> Ninguna entidad seria lo hace por SMS.</div>
+        <div class="callout"><strong>3 · Link acortado.</strong> Oculta a dónde te lleva realmente.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Señales ===== -->
+  <section class="band">
+    <div class="wrap section">
+      <div class="section-head">
+        <h2 class="h2">Seis señales de que el mensaje es falso</h2>
+        <p class="lead">Basta con una para desconfiar. Casi siempre aparecen varias juntas.</p>
+      </div>
+      <div class="grid">
+        <article class="signal">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <h3>Urgencia o amenaza</h3>
+          <p>“Su cuenta será bloqueada”, “último aviso”, “evite el embargo”. El apuro es la herramienta principal del estafador.</p>
+        </article>
+        <article class="signal">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"/></svg>
+          <h3>Premios o devoluciones que no pediste</h3>
+          <p>Subsidios, reembolsos de impuestos, sorteos o bonos. Si no hiciste ningún trámite, no hay nada que reclamar.</p>
+        </article>
+        <article class="signal">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>
+          <h3>Links acortados o dominios raros</h3>
+          <p>bit.ly, tinyurl, dominios como .info, .top, .xyz, o nombres que imitan a la entidad con guiones y palabras extra.</p>
+        </article>
+        <article class="signal">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 6h4M12 18h.01"/></svg>
+          <h3>Remitente desconocido</h3>
+          <p>Un número personal (+57 3XX…) o un código que nunca te había escrito. Ojo: los delincuentes también pueden falsificar el nombre del remitente.</p>
+        </article>
+        <article class="signal">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M7 16l5-12 5 12M9 11h6"/></svg>
+          <h3>Errores y tono extraño</h3>
+          <p>Ortografía descuidada, mayúsculas exageradas, saludos genéricos como “Estimado cliente” sin tu nombre.</p>
+        </article>
+        <article class="signal">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/></svg>
+          <h3>Te piden claves o códigos</h3>
+          <p>Contraseñas, PIN, datos de la tarjeta o el código de verificación que te llegó. Nadie legítimo te los pedirá por SMS.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Cómo leer un link ===== -->
+  <section class="wrap section">
+    <div class="section-head">
+      <h2 class="h2">Cómo leer un link antes de tocarlo</h2>
+      <p class="lead">Lo que importa es el dominio real: lo que está justo antes de la primera barra “/”. Todo lo que va a la izquierda puede ser inventado.</p>
+    </div>
+    <div class="url-box">
+      <div class="url-scroll">
+        <p class="url mono"><span class="dim">https://</span><span class="sub">mibanco.seguridad.</span><span class="real">verificar-cuenta.info</span><span class="dim">/login</span></p>
+      </div>
+      <div class="url-notes">
+        <div><strong>Dominio real</strong><span>verificar-cuenta.info: no tiene nada que ver con tu banco.</span></div>
+        <div><strong>El disfraz</strong><span>“mibanco.seguridad.” es solo un subdominio para engañarte a primera vista.</span></div>
+        <div><strong>El candado no basta</strong><span>“https” solo cifra la conexión. Un sitio falso también puede tenerlo.</span></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="typo"><strong>Letras cambiadas</strong><span class="mono">rnibanco.com en vez de mibanco.com</span><span>“rn” se ve como “m” en pantallas pequeñas.</span></div>
+      <div class="typo"><strong>Letras de más</strong><span class="mono">mibancoo.com / mi-banco-co.com</span><span>Una letra o un guion extra bastan para otro dueño.</span></div>
+      <div class="typo"><strong>Extensión distinta</strong><span class="mono">mibanco.com.co-pagos.top</span><span>Aquí el dominio real es co-pagos.top.</span></div>
+    </div>
+    <p class="rule">La regla más segura: no abras el link. Escribe tú mismo la dirección oficial o usa la app oficial de la entidad.</p>
+  </section>
+
+  <!-- ===== Quiz ===== -->
+  <section id="test" class="band">
+    <div class="wrap section">
+      <div class="quiz-head">
+        <div class="section-head">
+          <h2 class="h2">¿Real o falso? Pon a prueba tu ojo</h2>
+          <p class="lead">Lee cada mensaje y decide. Los ejemplos están basados en modalidades frecuentes en Colombia.</p>
+        </div>
+        <div class="score">
+          <span aria-live="polite">Aciertos: <b id="score">0</b> de <b id="total">0</b></span>
+          <button type="button" class="btn-sm" id="reset">Reiniciar</button>
+        </div>
+      </div>
+      <div class="grid" id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ===== Qué hacer ===== -->
+  <section id="que-hacer" class="wrap section">
+    <h2 class="h2">Qué hacer</h2>
+    <div class="grid">
+      <article class="action">
+        <span class="tag tag-blue">Al recibir el mensaje</span>
+        <h3>Detente y verifica por otro canal</h3>
+        <ul>
+          <li>No toques el link ni respondas el mensaje.</li>
+          <li>Comunícate con la entidad por su línea oficial (la del respaldo de tu tarjeta o su sitio web, escrito por ti).</li>
+          <li>Si dice venir de tu empresa, confírmalo con tu jefe o con el área de TI.</li>
+        </ul>
+      </article>
+      <article class="action">
+        <span class="tag tag-orange">Si ya hiciste clic</span>
+        <h3>Actúa rápido, sin vergüenza</h3>
+        <ul>
+          <li>Si no escribiste nada, cierra la página y no descargues archivos.</li>
+          <li>Si ingresaste claves: cámbialas de inmediato desde un dispositivo de confianza y activa la verificación en dos pasos.</li>
+          <li>Si diste datos de tarjeta o bancarios: llama ya a tu banco y pide el bloqueo.</li>
+          <li>Si fue en el celular del trabajo o con tu cuenta corporativa: avisa enseguida al área de seguridad.</li>
+        </ul>
+      </article>
+      <article class="action">
+        <span class="tag tag-teal">Reporta</span>
+        <h3>Ayuda a cortar la cadena</h3>
+        <ul>
+          <li>Área de seguridad de la organización: [CORREO O EXTENSIÓN DE SEGURIDAD].</li>
+          <li>CAI Virtual de la Policía Nacional: <a href="https://caivirtual.policia.gov.co" target="_blank" rel="noopener noreferrer">caivirtual.policia.gov.co</a></li>
+          <li>Bloquea el número y elimina el mensaje después de reportarlo.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== Cierre ===== -->
+  <section class="closing">
+    <div class="wrap">
+      <p>Si un mensaje te apura, detente. Ningún banco, entidad ni área de TI te pedirá claves por SMS.</p>
+      <a class="btn btn-light" href="#test">Repetir la prueba</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>[NOMBRE DE LA ORGANIZACIÓN] · Programa de concientización en seguridad de la información</span>
+    <span>Control ISO/IEC 27001:2022 A.6.3 · Concientización, educación y formación</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // Casos del ejercicio. verdict: 'fraude' | 'legitimo'
+  var CASES = [
+    { id: 'paquete', sender: '+57 321 555 0198', verdict: 'fraude',
+      text: 'Su paquete no pudo ser entregado por dirección incompleta. Pague $3.900 de reenvío aquí: entregas-co.info/pago',
+      explanation: 'Es fraude. El cobro pequeño es la carnada: lo que buscan son los datos completos de tu tarjeta. Las empresas de mensajería no cobran reenvíos por link.' },
+    { id: 'impuestos', sender: '899 771', verdict: 'fraude',
+      text: 'IMPUESTOS NACIONALES: Tiene una devolución pendiente por $1.250.000. Reclámela antes de hoy a las 6 p. m. en devolucion-impuestos.com',
+      explanation: 'Es fraude. Devolución que no pediste, plazo urgente y un dominio .com que no es el oficial del Estado (los sitios oficiales en Colombia terminan en .gov.co).' },
+    { id: 'codigo', sender: '85 432', verdict: 'legitimo',
+      text: 'Tu código de verificación es 482913. No lo compartas con nadie. Vence en 5 minutos.',
+      explanation: 'Probablemente legítimo, si tú acabas de solicitarlo: no trae link ni pide nada. Si no lo pediste, alguien intenta entrar a tu cuenta: no lo compartas y cambia tu clave.' },
+    { id: 'multa', sender: '+57 314 555 2207', verdict: 'fraude',
+      text: 'Tiene un comparendo de tránsito pendiente. Evite el embargo de su vehículo, pague hoy con descuento: bit.ly/multa-pago-hoy',
+      explanation: 'Es fraude. Amenaza, descuento por pagar ya, número personal y link acortado. Consulta tus multas solo en los portales oficiales, escribiendo tú la dirección.' }
+  ];
+
+  var answers = {};
+  var quiz = document.getElementById('quiz');
+  var scoreEl = document.getElementById('score');
+  document.getElementById('total').textContent = CASES.length;
+
+  // Construcción segura (textContent, sin innerHTML)
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text) n.textContent = text;
+    return n;
+  }
+
+  CASES.forEach(function (c) {
+    var card = el('article', 'case');
+    card.appendChild(el('span', 'sender', 'Remitente: ' + c.sender));
+    card.appendChild(el('div', 'bubble', c.text));
+
+    var choices = el('div', 'choices');
+    [['fraude', 'Es fraude'], ['legitimo', 'Parece legítimo']].forEach(function (opt) {
+      var b = el('button', 'btn-sm choice', opt[1]);
+      b.type = 'button';
+      b.dataset.choice = opt[0];
+      b.dataset.case = c.id;
+      b.setAttribute('aria-pressed', 'false');
+      choices.appendChild(b);
+    });
+    card.appendChild(choices);
+
+    var fb = el('div', 'feedback is-' + c.verdict);
+    fb.id = 'fb-' + c.id;
+    fb.hidden = true;
+    fb.setAttribute('aria-live', 'polite');
+    card.appendChild(fb);
+
+    quiz.appendChild(card);
+  });
+
+  function render() {
+    var score = 0;
+    CASES.forEach(function (c) {
+      var ans = answers[c.id];
+      var fb = document.getElementById('fb-' + c.id);
+      quiz.querySelectorAll('[data-case="' + c.id + '"]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.choice === ans));
+      });
+      if (ans === undefined) { fb.hidden = true; fb.textContent = ''; return; }
+      var ok = ans === c.verdict;
+      if (ok) score++;
+      fb.textContent = '';
+      fb.appendChild(el('strong', null, ok ? 'Correcto. ' : 'Revisa este. '));
+      fb.appendChild(document.createTextNode(c.explanation));
+      fb.hidden = false;
+    });
+    scoreEl.textContent = score;
+  }
+
+  quiz.addEventListener('click', function (e) {
+    var b = e.target.closest('.choice');
+    if (!b) return;
+    answers[b.dataset.case] = b.dataset.choice;
+    render();
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    answers = {};
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
